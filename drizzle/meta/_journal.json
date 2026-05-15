@@ -1,0 +1,20 @@
+{
+  "version": "6",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1778770099808,
+      "tag": "0000_simple_nehzno",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1748000000000,
+      "tag": "0001_add_views_and_likes",
+      "breakpoints": true
+    }
+  ]
+}
