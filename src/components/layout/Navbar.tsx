@@ -1,6 +1,9 @@
 import Link from "next/link"
+import { getSession } from "@/lib/auth"
 
-export function Navbar() {
+export async function Navbar() {
+  const session = await getSession()
+
   return (
     <nav className="sticky top-0 z-50 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -35,12 +38,21 @@ export function Navbar() {
             </div>
           </div>
           <div className="flex items-center space-x-4">
-            <Link
-              href="/login"
-              className="text-sm font-medium text-gray-700 hover:text-blue-600"
-            >
-              Login
-            </Link>
+            {session ? (
+              <Link
+                href="/admin"
+                className="text-sm font-medium text-blue-600 hover:text-blue-700"
+              >
+                Admin
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="text-sm font-medium text-gray-700 hover:text-blue-600"
+              >
+                Login
+              </Link>
+            )}
           </div>
         </div>
       </div>

@@ -32,39 +32,20 @@ export const authOptions: NextAuthOptions = {
 
       async authorize(credentials) {
         try {
-          console.log("LOGIN START");
-
-          if (!credentials?.email || !credentials?.password) {
-            console.log("Missing credentials");
-            return null;
-          }
-
-          console.log("EMAIL:", credentials.email);
+          if (!credentials?.email || !credentials?.password) return null;
 
           const user = await db.query.users.findFirst({
             where: eq(users.email, credentials.email),
           });
 
-          console.log("DB USER:", user);
-
-          if (!user) {
-            console.log("User not found");
-            return null;
-          }
+          if (!user) return null;
 
           const isPasswordCorrect = await bcrypt.compare(
             credentials.password,
             user.password
           );
 
-          console.log("PASSWORD MATCH:", isPasswordCorrect);
-
-          if (!isPasswordCorrect) {
-            console.log("Wrong password");
-            return null;
-          }
-
-          console.log("LOGIN SUCCESS");
+          if (!isPasswordCorrect) return null;
 
           return {
             id: user.id,
@@ -72,7 +53,7 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
           };
         } catch (error) {
-          console.log("AUTH ERROR:", error);
+          console.error("[auth:authorize]", error instanceof Error ? error.message : error);
           return null;
         }
       },

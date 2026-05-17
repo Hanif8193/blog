@@ -98,6 +98,7 @@ export async function updateBlog(id: string, formData: FormData) {
 
   revalidatePath("/admin/blogs");
   revalidatePath(`/blog/${slug}`);
+  revalidatePath("/blogs");
   revalidatePath("/");
   redirect("/admin/blogs");
 }
@@ -113,5 +114,6 @@ export async function deleteBlog(id: string) {
   }
 
   revalidatePath("/admin/blogs");
+  revalidatePath("/blogs");
   revalidatePath("/");
 }
