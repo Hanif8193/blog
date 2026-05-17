@@ -22,12 +22,17 @@ export async function createBlog(formData: FormData) {
   const session = await getSession();
   if (!session?.user) throw new Error("Unauthorized");
 
+  const authorId = (session.user as any).id as string | undefined;
+  if (!authorId) {
+    return { error: "Your session has expired. Please sign out and sign in again." };
+  }
+
   const validatedFields = blogSchema.safeParse({
     title: formData.get("title"),
     slug: formData.get("slug"),
     content: formData.get("content"),
-    excerpt: formData.get("excerpt"),
-    image: formData.get("image"),
+    excerpt: (formData.get("excerpt") as string) || undefined,
+    image: (formData.get("image") as string) || undefined,
     categoryId: formData.get("categoryId"),
     published: formData.get("published") === "on",
   });
@@ -47,7 +52,7 @@ export async function createBlog(formData: FormData) {
       image,
       categoryId,
       published,
-      authorId: (session.user as any).id,
+      authorId,
     });
   } catch (error: any) {
     if (error?.code === "23505") {
@@ -70,8 +75,8 @@ export async function updateBlog(id: string, formData: FormData) {
     title: formData.get("title"),
     slug: formData.get("slug"),
     content: formData.get("content"),
-    excerpt: formData.get("excerpt"),
-    image: formData.get("image"),
+    excerpt: (formData.get("excerpt") as string) || undefined,
+    image: (formData.get("image") as string) || undefined,
     categoryId: formData.get("categoryId"),
     published: formData.get("published") === "on",
   });
