@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
+import { slugify } from "@/lib/slugify";
 
 interface CategoryFormProps {
   initialData?: {
@@ -17,6 +18,15 @@ export function CategoryForm({ initialData, action }: CategoryFormProps) {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [name, setName] = useState(initialData?.name || "");
+  const [slug, setSlug] = useState(initialData?.slug || "");
+  const [isSlugEdited, setIsSlugEdited] = useState(false);
+
+  useEffect(() => {
+    if (!isSlugEdited && !initialData) {
+      setSlug(slugify(name));
+    }
+  }, [name, isSlugEdited, initialData]);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -24,6 +34,8 @@ export function CategoryForm({ initialData, action }: CategoryFormProps) {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
+    formData.set("name", name);
+    formData.set("slug", slug);
     const result = await action(formData);
 
     if (result && result.error) {
@@ -50,7 +62,8 @@ export function CategoryForm({ initialData, action }: CategoryFormProps) {
             name="name"
             type="text"
             required
-            defaultValue={initialData?.name}
+            value={name}
+            onChange={(e) => setName(e.target.value)}
             className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
             placeholder="e.g. Technology"
           />
@@ -65,7 +78,11 @@ export function CategoryForm({ initialData, action }: CategoryFormProps) {
             name="slug"
             type="text"
             required
-            defaultValue={initialData?.slug}
+            value={slug}
+            onChange={(e) => {
+              setSlug(e.target.value);
+              setIsSlugEdited(true);
+            }}
             className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-blue-500 focus:outline-none"
             placeholder="e.g. technology"
           />

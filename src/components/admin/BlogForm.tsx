@@ -42,13 +42,8 @@ export function BlogForm({ initialData, categories, action }: BlogFormProps) {
     setLoading(true);
     setError(null);
 
-    console.log("Submitting blog form...");
-    console.log("Image URL in state:", imageUrl);
-
     const formData = new FormData(e.currentTarget);
-    formData.append("image", imageUrl);
-    
-    // Explicitly add slug and title in case they are not in form fields or modified
+    formData.set("image", imageUrl);
     formData.set("title", title);
     formData.set("slug", slug);
 
@@ -75,10 +70,7 @@ export function BlogForm({ initialData, categories, action }: BlogFormProps) {
         </label>
         <ImageUpload
           value={imageUrl}
-          onChange={(url) => {
-            console.log("ImageUpload onChange triggered with URL:", url);
-            setImageUrl(url || "");
-          }}
+          onChange={(url) => setImageUrl(url || "")}
         />
       </div>
 
