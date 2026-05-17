@@ -47,11 +47,21 @@ export function BlogForm({ initialData, categories, action }: BlogFormProps) {
     formData.set("title", title);
     formData.set("slug", slug);
 
-    const result = await action(formData);
-
-    if (result && result.error) {
-      console.error("Form submission error:", result.error);
-      setError(typeof result.error === "string" ? result.error : "Validation failed");
+    try {
+      const result = await action(formData);
+      if (result?.error) {
+        const err = result.error;
+        if (typeof err === "string") {
+          setError(err);
+        } else {
+          const messages = Object.values(err as Record<string, string[]>).flat();
+          setError(messages[0] ?? "Please fill in all required fields correctly.");
+        }
+        setLoading(false);
+      }
+      // No error → server called redirect(), navigation is in progress
+    } catch {
+      setError("Something went wrong. Please try again.");
       setLoading(false);
     }
   };

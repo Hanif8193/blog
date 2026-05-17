@@ -16,8 +16,6 @@ export const ImageUpload = ({
 }: ImageUploadProps) => {
   const [isUploading, setIsUploading] = useState(false);
 
-  console.log("ImageUpload rendering. Current value:", value);
-
   if (value) {
     return (
       <div className="relative h-60 w-full max-w-xl">
@@ -28,10 +26,7 @@ export const ImageUpload = ({
           className="rounded-xl object-cover border border-gray-200"
         />
         <button
-          onClick={() => {
-            console.log("Removing image...");
-            onChange("");
-          }}
+          onClick={() => onChange("")}
           className="absolute -right-3 -top-3 rounded-full bg-red-500 p-2 text-white shadow-lg hover:bg-red-600 transition-colors"
           type="button"
           title="Remove image"
@@ -46,21 +41,13 @@ export const ImageUpload = ({
     <div className="w-full max-w-xl">
       <UploadButton
         endpoint="imageUploader"
-        onUploadBegin={(name) => {
-          console.log("Starting upload for:", name);
-          setIsUploading(true);
-        }}
+        onUploadBegin={() => setIsUploading(true)}
         onClientUploadComplete={(res) => {
-          console.log("Upload completed successfully:", res);
           setIsUploading(false);
-          if (res?.[0]) {
-            console.log("New Image URL:", res[0].url);
-            onChange(res[0].url);
-          }
+          if (res?.[0]) onChange(res[0].url);
         }}
         onUploadError={(error: Error) => {
           setIsUploading(false);
-          console.error("Upload Error Details:", error);
           alert(`Upload failed: ${error.message}`);
         }}
       />

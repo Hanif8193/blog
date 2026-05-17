@@ -49,8 +49,12 @@ export async function createBlog(formData: FormData) {
       published,
       authorId: (session.user as any).id,
     });
-  } catch (error) {
-    return { error: "Failed to create blog post. Slug might already exist." };
+  } catch (error: any) {
+    if (error?.code === "23505") {
+      return { error: "A blog with this slug already exists. Please use a different slug." };
+    }
+    console.error("[createBlog]", error?.message ?? error);
+    return { error: "Failed to create blog post. Please try again." };
   }
 
   revalidatePath("/admin/blogs");
@@ -92,8 +96,12 @@ export async function updateBlog(id: string, formData: FormData) {
         updatedAt: new Date(),
       })
       .where(eq(blogs.id, id));
-  } catch (error) {
-    return { error: "Failed to update blog post. Slug might already exist." };
+  } catch (error: any) {
+    if (error?.code === "23505") {
+      return { error: "A blog with this slug already exists. Please use a different slug." };
+    }
+    console.error("[updateBlog]", error?.message ?? error);
+    return { error: "Failed to update blog post. Please try again." };
   }
 
   revalidatePath("/admin/blogs");
